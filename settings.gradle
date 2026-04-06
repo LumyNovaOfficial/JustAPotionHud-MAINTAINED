@@ -1,0 +1,12 @@
+pluginManagement {
+    repositories {
+        maven { name = 'Fabric'; url = 'https://maven.fabricmc.net/' }
+        gradlePluginPortal()
+    }
+}
+rootProject.name = 'just-a-potion-hud-maintained'
+include 'fabric-1.21.1'
+include 'fabric-1.21.4'
+include 'fabric-1.21.6-1.21.8'
+include 'fabric-1.21.10'
+include 'fabric-1.21.11'

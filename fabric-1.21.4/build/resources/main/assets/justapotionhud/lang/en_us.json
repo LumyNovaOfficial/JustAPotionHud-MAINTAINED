@@ -1,0 +1,6 @@
+{
+  "gui.justapotionhud.config.title":   "Potion HUD Config",
+  "gui.justapotionhud.config.scale":   "Scale: %s",
+  "gui.justapotionhud.config.enabled":  "HUD: Enabled",
+  "gui.justapotionhud.config.disabled": "HUD: Disabled"
+}
