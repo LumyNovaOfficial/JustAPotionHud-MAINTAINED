@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "justapotionhud",
+  "version": "${version}",
+  "name": "JustAPotionHud-MAINTAINED",
+  "description": "Clean potion HUD with icon, name and timer. Config via ESC menu.",
+  "authors": ["Lumyrix"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.lumyrix.potionhud.JustAPotionHudClient"]
+  },
+  "mixins": ["justapotionhud.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.18.0",
+    "minecraft": "~1.21.11",
+    "fabric-api": "*"
+  }
+}
