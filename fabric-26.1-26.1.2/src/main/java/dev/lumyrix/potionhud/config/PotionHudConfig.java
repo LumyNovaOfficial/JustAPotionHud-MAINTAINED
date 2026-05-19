@@ -19,6 +19,7 @@ public class PotionHudConfig {
     public boolean flicker             = true;
     public boolean iconRight           = false;
     public boolean previewMode         = false;
+    public boolean hideVanillaHud      = false;
 
     public String  anchor              = "CENTER_LEFT";
     public int     offsetX             = 5;
@@ -49,6 +50,8 @@ public class PotionHudConfig {
     public void       setIconRight(boolean v)          { iconRight = v; }
     public boolean    isPreviewMode()                  { return previewMode; }
     public void       setPreviewMode(boolean v)        { previewMode = v; }
+    public boolean    isHideVanillaHud()               { return hideVanillaHud; }
+    public void       setHideVanillaHud(boolean v)     { hideVanillaHud = v; }
 
     public HudAnchor  getAnchor()                      { try { return HudAnchor.valueOf(anchor); } catch (Exception e) { return HudAnchor.CENTER_LEFT; } }
     public void       setAnchor(HudAnchor v)           { anchor = v.name(); }
@@ -119,6 +122,7 @@ public class PotionHudConfig {
 
     public void resetToDefaults() {
         scale = 1.0f; enabled = true; flicker = true; iconRight = false; previewMode = false;
+        hideVanillaHud = false;
         anchor = "CENTER_LEFT"; offsetX = 5; offsetY = 5;
         posXFrac = 0.02f; posYFrac = 0.50f; useAltPos = false;
         maxHudHeightFrac = 0.43f; maxEffectsOverride = -1;

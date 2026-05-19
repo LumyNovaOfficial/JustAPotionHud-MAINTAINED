@@ -133,6 +133,7 @@ public class PotionHudConfigScreen extends Screen {
             .pos(cx, top + 125).size(W, H).build())
             .setTooltip(Tooltip.create(Component.translatable("potionhud.tooltip.reset")));
 
+
         addRenderableWidget(Button.builder(
                 Component.translatable(cfg.isPreviewMode() ? "potionhud.option.preview_on" : "potionhud.option.preview_off"),
                 btn -> {
@@ -168,22 +169,34 @@ public class PotionHudConfigScreen extends Screen {
             .pos(cx, top + 50).size(W, H).build())
             .setTooltip(Tooltip.create(Component.translatable("potionhud.tooltip.bg_color")));
 
-        // Shadows removido — botao eliminado para nao duplicar posicao
+        addRenderableWidget(Button.builder(
+                Component.translatable(cfg.isHideVanillaHud()
+                    ? "potionhud.option.hide_vanilla_hud_yes"
+                    : "potionhud.option.hide_vanilla_hud_no"),
+                btn -> {
+                    boolean v = !PotionHudConfig.getInstance().isHideVanillaHud();
+                    PotionHudConfig.getInstance().setHideVanillaHud(v);
+                    PotionHudConfig.save();
+                    btn.setMessage(Component.translatable(v
+                        ? "potionhud.option.hide_vanilla_hud_yes"
+                        : "potionhud.option.hide_vanilla_hud_no"));
+                }).pos(cx, top + 75).size(W, H).build())
+            .setTooltip(Tooltip.create(Component.translatable("potionhud.tooltip.hide_vanilla_hud")));
 
         addRenderableWidget(Button.builder(
                 Component.literal("Advanced Options " + (showAdvancedHudOptions ? "\u25B2" : "\u25BC")),
                 btn -> { showAdvancedHudOptions = !showAdvancedHudOptions; rebuildWidgets(); })
-            .pos(cx, top + 75).size(W, H).build())
+            .pos(cx, top + 100).size(W, H).build())
             .setTooltip(Tooltip.create(Component.translatable("potionhud.tooltip.advanced_options")));
 
         if (showAdvancedHudOptions) {
-            addRenderableWidget(new AbstractSliderButton(cx, top + 100, W, H,
+            addRenderableWidget(new AbstractSliderButton(cx, top + 125, W, H,
                     maxHeightLabel(cfg.getMaxHudHeightFrac()), cfg.getMaxHudHeightFrac()) {
                 @Override protected void updateMessage() { setMessage(maxHeightLabel((float) value)); }
                 @Override protected void applyValue()    { markCustom(); PotionHudConfig.getInstance().setMaxHudHeightFrac((float) value); }
             }).setTooltip(Tooltip.create(Component.translatable("potionhud.tooltip.max_height")));
 
-            maxEffectsInput = new EditBox(font, cx, top + 125, W, H,
+            maxEffectsInput = new EditBox(font, cx, top + 150, W, H,
                 Component.translatable("potionhud.option.max_effects_input"));
             maxEffectsInput.setMaxLength(3);
             int cur = cfg.getMaxEffectsOverride();

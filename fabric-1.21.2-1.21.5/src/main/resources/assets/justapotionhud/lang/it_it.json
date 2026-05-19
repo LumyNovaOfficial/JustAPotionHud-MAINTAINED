@@ -65,9 +65,12 @@
   "potionhud.hint.load_preset": "Enter filename (without .json):",
   "potionhud.hint.config_folder": "(saves to / loads from config folder)",
   "potionhud.preview.warning": "! PREVIEW HUD ACTIVE - DISABLE IN SETTINGS !",
-  "potionhud.exp.warning_title": "\u26a0 Experimental Feature",
+  "potionhud.exp.warning_title": "⚠ Experimental Feature",
   "potionhud.exp.warning_line1": "This is an advanced positioning system.",
   "potionhud.exp.warning_line2": "It may have bugs or behave unexpectedly.",
   "potionhud.exp.warning_line3": "Use the preset positions for a stable experience.",
-  "potionhud.button.hud_positioning": "HUD Positioning"
+  "potionhud.button.hud_positioning": "HUD Positioning",
+  "potionhud.option.hide_vanilla_hud_yes": "Nascondi HUD Pozioni Vanilla: Sì",
+  "potionhud.option.hide_vanilla_hud_no": "Nascondi HUD Pozioni Vanilla: No",
+  "potionhud.tooltip.hide_vanilla_hud": "Nasconde le icone degli effetti delle pozioni vanilla nell'angolo in alto a destra"
 }

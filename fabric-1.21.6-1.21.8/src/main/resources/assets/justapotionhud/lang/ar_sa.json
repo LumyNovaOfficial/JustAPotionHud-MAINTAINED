@@ -1,5 +1,5 @@
 {
-  "potionhud.screen.config": "\u0625\u0639\u062f\u0627\u062f\u0627\u062a HUD \u0627\u0644\u062c\u0631\u0639\u0627\u062a",
+  "potionhud.screen.config": "إعدادات HUD الجرعات",
   "potionhud.screen.position": "HUD Position",
   "potionhud.screen.color_picker": "Background Color",
   "potionhud.screen.save_preset": "Save Custom Preset",
@@ -65,9 +65,12 @@
   "potionhud.hint.load_preset": "Enter filename (without .json):",
   "potionhud.hint.config_folder": "(saves to / loads from config folder)",
   "potionhud.preview.warning": "! PREVIEW HUD ACTIVE - DISABLE IN SETTINGS !",
-  "potionhud.exp.warning_title": "\u26a0 Experimental Feature",
+  "potionhud.exp.warning_title": "⚠ Experimental Feature",
   "potionhud.exp.warning_line1": "This is an advanced positioning system.",
   "potionhud.exp.warning_line2": "It may have bugs or behave unexpectedly.",
   "potionhud.exp.warning_line3": "Use the preset positions for a stable experience.",
-  "potionhud.button.hud_positioning": "HUD Positioning"
+  "potionhud.button.hud_positioning": "HUD Positioning",
+  "potionhud.option.hide_vanilla_hud_yes": "إخفاء HUD الجرعات الافتراضي: نعم",
+  "potionhud.option.hide_vanilla_hud_no": "إخفاء HUD الجرعات الافتراضي: لا",
+  "potionhud.tooltip.hide_vanilla_hud": "يخفي أيقونات تأثيرات الجرعات الافتراضية في الزاوية العلوية اليمنى"
 }

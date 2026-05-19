@@ -13,6 +13,15 @@ public class JustAPotionHudClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         PotionHudConfig.load();
+
+        HudElementRegistry.replaceElement(VanillaHudElements.MOB_EFFECTS,
+            original -> (graphics, delta) -> {
+                if (!PotionHudConfig.getInstance().isHideVanillaHud()) {
+                    original.extractRenderState(graphics, delta);
+                }
+            }
+        );
+
         HudElementRegistry.attachElementAfter(
             VanillaHudElements.MOB_EFFECTS,
             Identifier.fromNamespaceAndPath(MOD_ID, "hud"),
