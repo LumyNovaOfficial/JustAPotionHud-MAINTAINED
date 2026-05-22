@@ -51,7 +51,7 @@ public final class PotionHudRenderer {
     public static int[] renderPreviewAndGetSize(GuiGraphics graphics, int screenW, int screenH) {
         PotionHudConfig cfg = PotionHudConfig.getInstance();
         Minecraft mc = Minecraft.getInstance();
-        List<EffectEntry> entries = buildFakeEntries();
+        List<EffectEntry> entries = buildFakeEntries(cfg);
         return renderEntries(graphics, cfg, mc, screenW, screenH, entries);
     }
 
@@ -96,12 +96,13 @@ public final class PotionHudRenderer {
         return out;
     }
 
-    private static List<EffectEntry> buildFakeEntries() {
+        private static List<EffectEntry> buildFakeEntries(PotionHudConfig cfg) {
         return List.of(
-                new EffectEntry("Speed", " II", "--:--", false, 1f,
-                        BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.SPEED.value()), false),
-                new EffectEntry("Strength", " I", "--:--", false, 1f,
-                        BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.STRENGTH.value()), false)
+            new EffectEntry("Speed",        cfg.isHideLevel1() ? "" : " II",  "--:--", false, 1f, MobEffects.SPEED, false),
+            new EffectEntry("Regeneration", cfg.isHideLevel1() ? "" : " I",   "--:--", false, 1f, MobEffects.REGENERATION, false),
+            new EffectEntry("Strength",     " III", "--:--", false, 1f, MobEffects.STRENGTH, false),
+            new EffectEntry("Jump Boost",   cfg.isHideLevel1() ? "" : " II",  "--:--", false, 1f, MobEffects.JUMP_BOOST, false),
+            new EffectEntry("Resistance",   cfg.isHideLevel1() ? "" : " I",   "--:--", false, 1f, MobEffects.RESISTANCE, false)
         );
     }
 

@@ -78,13 +78,34 @@ public final class PotionHudRenderer {
             mc.getWindow().getGuiScaledHeight(), entries);
     }
 
+    private static List<EffectEntry> buildFakeEntries() {
+        return List.of(
+            new EffectEntry("Speed",        " II",  "--:--", false, 1f, MobEffects.MOVEMENT_SPEED, false),
+            new EffectEntry("Regeneration", " I",   "--:--", false, 1f, MobEffects.REGENERATION, false),
+            new EffectEntry("Strength",     " III", "--:--", false, 1f, MobEffects.DAMAGE_BOOST, false),
+            new EffectEntry("Jump Boost",   " II",  "--:--", false, 1f, MobEffects.JUMP, false),
+            new EffectEntry("Resistance",   " I",   "--:--", false, 1f, MobEffects.DAMAGE_RESISTANCE, false)
+        );
+    }
+
+    private static List<EffectEntry> buildFakeEntriesHideLevel1() {
+        return List.of(
+            new EffectEntry("Speed",        " II",  "--:--", false, 1f, MobEffects.MOVEMENT_SPEED, false),
+            new EffectEntry("Regeneration", "",     "--:--", false, 1f, MobEffects.REGENERATION, false),
+            new EffectEntry("Strength",     " III", "--:--", false, 1f, MobEffects.DAMAGE_BOOST, false),
+            new EffectEntry("Jump Boost",   " II",  "--:--", false, 1f, MobEffects.JUMP, false),
+            new EffectEntry("Resistance",   "",     "--:--", false, 1f, MobEffects.DAMAGE_RESISTANCE, false)
+        );
+    }
+
     public static int[] renderPreviewAndGetSize(GuiGraphics graphics, int screenW, int screenH) {
-        return renderEntries(graphics, PotionHudConfig.getInstance(),
-            Minecraft.getInstance(), screenW, screenH, buildFakeEntries());
+        PotionHudConfig cfg = PotionHudConfig.getInstance();
+        return renderEntries(graphics, cfg,
+            Minecraft.getInstance(), screenW, screenH, cfg.isHideLevel1() ? buildFakeEntriesHideLevel1() : buildFakeEntries());
     }
 
     private static List<EffectEntry> buildEntries(PotionHudConfig cfg, Minecraft mc) {
-        if (cfg.isPreviewMode()) return buildFakeEntries();
+        if (cfg.isPreviewMode()) return cfg.isHideLevel1() ? buildFakeEntriesHideLevel1() : buildFakeEntries();
         if (mc.player == null) return List.of();
         List<MobEffectInstance> real = new ArrayList<>(mc.player.getActiveEffects());
         if (real.isEmpty()) return List.of();
@@ -126,16 +147,7 @@ public final class PotionHudRenderer {
         return out;
     }
 
-    private static List<EffectEntry> buildFakeEntries() {
-        return List.of(
-            new EffectEntry("Speed",        " II",  "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.MOVEMENT_SPEED.value()), false),
-            new EffectEntry("Regeneration", " I",   "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.REGENERATION.value()), false),
-            new EffectEntry("Strength",     " III", "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.DAMAGE_BOOST.value()), false),
-            new EffectEntry("Jump Boost",   " II",  "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.JUMP.value()), false),
-            new EffectEntry("Resistance",   " I",   "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.DAMAGE_RESISTANCE.value()), false)
-        );
-    }
-
+    
         private static int cachedWidth(String text, float scale) {
         if (cachedMc == null || scale != cachedScale) {
             TEXT_WIDTH_CACHE.clear();
