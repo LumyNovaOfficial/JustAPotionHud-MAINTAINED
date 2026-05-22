@@ -125,7 +125,9 @@ public class PotionHudConfigScreen extends Screen {
                     btn.setMessage(Component.translatable(v ? "potionhud.option.icon_right" : "potionhud.option.icon_left"));
                     markCustom();
                 }).pos(cx, top + 100).size(W, H).build())
-            .setTooltip(Tooltip.create(Component.translatable("potionhud.tooltip.icon_side")));
+            .setTooltip(Tooltip.create(Component.translatable(cfg.isIconRight()
+                ? "potionhud.tooltip.icon_side_to_left"
+                : "potionhud.tooltip.icon_side_to_right")));
 
         addRenderableWidget(Button.builder(
                 Component.translatable("potionhud.button.reset"),
@@ -184,19 +186,33 @@ public class PotionHudConfigScreen extends Screen {
             .setTooltip(Tooltip.create(Component.translatable("potionhud.tooltip.hide_vanilla_hud")));
 
         addRenderableWidget(Button.builder(
+                Component.translatable(cfg.isHideLevel1()
+                    ? "potionhud.option.hide_level1_yes"
+                    : "potionhud.option.hide_level1_no"),
+                btn -> {
+                    boolean v = !PotionHudConfig.getInstance().isHideLevel1();
+                    PotionHudConfig.getInstance().setHideLevel1(v);
+                    PotionHudConfig.save();
+                    btn.setMessage(Component.translatable(v
+                        ? "potionhud.option.hide_level1_yes"
+                        : "potionhud.option.hide_level1_no"));
+                }).pos(cx, top + 100).size(W, H).build())
+            .setTooltip(Tooltip.create(Component.translatable("potionhud.tooltip.hide_level1")));
+
+        addRenderableWidget(Button.builder(
                 Component.literal("Advanced Options " + (showAdvancedHudOptions ? "\u25B2" : "\u25BC")),
                 btn -> { showAdvancedHudOptions = !showAdvancedHudOptions; rebuildWidgets(); })
-            .pos(cx, top + 100).size(W, H).build())
+            .pos(cx, top + 125).size(W, H).build())
             .setTooltip(Tooltip.create(Component.translatable("potionhud.tooltip.advanced_options")));
 
         if (showAdvancedHudOptions) {
-            addRenderableWidget(new AbstractSliderButton(cx, top + 125, W, H,
+            addRenderableWidget(new AbstractSliderButton(cx, top + 150, W, H,
                     maxHeightLabel(cfg.getMaxHudHeightFrac()), cfg.getMaxHudHeightFrac()) {
                 @Override protected void updateMessage() { setMessage(maxHeightLabel((float) value)); }
                 @Override protected void applyValue()    { markCustom(); PotionHudConfig.getInstance().setMaxHudHeightFrac((float) value); }
             }).setTooltip(Tooltip.create(Component.translatable("potionhud.tooltip.max_height")));
 
-            maxEffectsInput = new EditBox(font, cx, top + 150, W, H,
+            maxEffectsInput = new EditBox(font, cx, top + 175, W, H,
                 Component.translatable("potionhud.option.max_effects_input"));
             maxEffectsInput.setMaxLength(3);
             int cur = cfg.getMaxEffectsOverride();
@@ -355,10 +371,6 @@ public class PotionHudConfigScreen extends Screen {
             g.drawCenteredString(font,
                 Component.literal("Position: " + PotionHudConfig.getInstance().getAnchor().label()),
                 width/2, top + 58, 0xFFCCCCCC);
-        }
-        if (activeTab == 1 && showAdvancedHudOptions) {
-            g.drawString(font, Component.translatable("potionhud.option.max_effects_label"),
-                cx, top + 148, 0xFF888888, false);
         }
 
         g.drawCenteredString(font,

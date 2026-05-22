@@ -86,5 +86,10 @@
   "potionhud.button.hud_positioning": "HUD Positioning",
   "potionhud.option.hide_vanilla_hud_yes": "Vanilla Trank-HUD ausblenden: Ja",
   "potionhud.option.hide_vanilla_hud_no": "Vanilla Trank-HUD ausblenden: Nein",
-  "potionhud.tooltip.hide_vanilla_hud": "Blendet die Standard-Tränke-Symbole in der oberen rechten Ecke aus"
+  "potionhud.tooltip.hide_vanilla_hud": "Blendet die Standard-Tränke-Symbole in der oberen rechten Ecke aus",
+  "potionhud.option.hide_level1_yes": "Stufe I ausblenden: Ja",
+  "potionhud.option.hide_level1_no": "Stufe I ausblenden: Nein",
+  "potionhud.tooltip.hide_level1": "Wenn aktiviert, werden Effekte der Stufe 1 ohne römische Ziffer angezeigt (z.B. 'Geschwindigkeit' statt 'Geschwindigkeit I').",
+  "potionhud.tooltip.icon_side_to_right": "Ändert die Icon-Seite",
+  "potionhud.tooltip.icon_side_to_left": "Ändert die Icon-Seite"
 }

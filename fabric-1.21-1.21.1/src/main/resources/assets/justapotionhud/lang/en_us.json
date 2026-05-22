@@ -86,5 +86,10 @@
   "potionhud.button.hud_positioning": "HUD Positioning",
   "potionhud.option.hide_vanilla_hud_yes": "Hide Vanilla Potion HUD: Yes",
   "potionhud.option.hide_vanilla_hud_no": "Hide Vanilla Potion HUD: No",
-  "potionhud.tooltip.hide_vanilla_hud": "Hides the vanilla potion effect icons in the top-right corner"
+  "potionhud.tooltip.hide_vanilla_hud": "Hides the vanilla potion effect icons in the top-right corner",
+  "potionhud.option.hide_level1_yes": "Hide Level I: Yes",
+  "potionhud.option.hide_level1_no": "Hide Level I: No",
+  "potionhud.tooltip.hide_level1": "When enabled, effects at level 1 show without the Roman numeral (e.g. 'Speed' instead of 'Speed I')",
+  "potionhud.tooltip.icon_side_to_right": "Changes icon side",
+  "potionhud.tooltip.icon_side_to_left": "Changes icon side"
 }

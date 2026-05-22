@@ -3,6 +3,12 @@
   "minVersion": "0.8",
   "package": "dev.lumyrix.potionhud.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": ["GuiMixin", "PauseScreenMixin"],
-  "injectors": { "defaultRequire": 0 }
+  "client": [
+    "GuiMixin",
+    "PauseScreenMixin",
+    "SplashManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
 }

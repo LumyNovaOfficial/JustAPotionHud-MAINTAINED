@@ -86,5 +86,10 @@
   "potionhud.button.hud_positioning": "HUD Positioning",
   "potionhud.option.hide_vanilla_hud_yes": "Masquer le HUD de potions vanilla: Oui",
   "potionhud.option.hide_vanilla_hud_no": "Masquer le HUD de potions vanilla: Non",
-  "potionhud.tooltip.hide_vanilla_hud": "Masque les icônes d'effets de potions vanilla dans le coin supérieur droit"
+  "potionhud.tooltip.hide_vanilla_hud": "Masque les icônes d'effets de potions vanilla dans le coin supérieur droit",
+  "potionhud.option.hide_level1_yes": "Masquer Niveau I : Oui",
+  "potionhud.option.hide_level1_no": "Masquer Niveau I : Non",
+  "potionhud.tooltip.hide_level1": "Quand activé, les effets de niveau 1 s'affichent sans le chiffre romain (ex. 'Vitesse' au lieu de 'Vitesse I').",
+  "potionhud.tooltip.icon_side_to_right": "Change le côté de l'icône",
+  "potionhud.tooltip.icon_side_to_left": "Change le côté de l'icône"
 }

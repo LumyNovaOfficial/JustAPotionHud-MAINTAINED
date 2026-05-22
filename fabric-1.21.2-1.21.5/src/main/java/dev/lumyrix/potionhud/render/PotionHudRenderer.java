@@ -18,7 +18,9 @@ import net.minecraft.world.effect.MobEffects;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class PotionHudRenderer {
     private static final int   BASE_ICON        = 18;
@@ -29,7 +31,6 @@ public final class PotionHudRenderer {
     private static final int   CORNER_R         = 6;
     private static final float SHADOW_INTENSITY = 0.168f;
 
-    // Corner AA cache — 4x4 supersampling on boundary pixels only
     private static int cachedR = -1, cachedBaseA = -1, cachedRgb = -1;
     private static int[][] cornerCache = null;
 
@@ -37,10 +38,17 @@ public final class PotionHudRenderer {
     private static long lastMarqueeTime = 0;
     private static final float[] marqueeOffsets = new float[32];
 
+    private static final Map<Holder<MobEffect>, Long> LOW_DURATION_START = new HashMap<>();
+    // Cache de larguras de texto
+    private static final java.util.Map<String, Integer> TEXT_WIDTH_CACHE = new java.util.HashMap<>();
+    private static int cachedScale = -1;
+    private static Minecraft cachedMc = null;
+
+
     private PotionHudRenderer() {}
 
     public record EffectEntry(String name, String level, String time, boolean warn,
-                              float textAlpha, Holder<MobEffect> holder) {}
+                              float textAlpha, Holder<MobEffect> holder, boolean infinite) {}
 
     public static void render(GuiGraphics graphics, DeltaTracker delta) {
         Minecraft mc = Minecraft.getInstance();
@@ -87,6 +95,24 @@ public final class PotionHudRenderer {
             boolean warn    = ticks != Integer.MAX_VALUE && ticks <= 319;
             boolean flicker = cfg.isFlicker() && ticks != Integer.MAX_VALUE && ticks <= FLICKER_START;
             float textAlpha = 1.0f;
+            boolean infinite = false;
+
+            if (ticks != Integer.MAX_VALUE && ticks <= 20) {
+                long now = System.currentTimeMillis();
+                Holder<MobEffect> holder = inst.getEffect();
+                Long start = LOW_DURATION_START.get(holder);
+                if (start == null) {
+                    LOW_DURATION_START.put(holder, now);
+                } else if (now - start > 3500) {
+                    infinite = true;
+                    warn = true;
+                    flicker = false;
+                    textAlpha = 1.0f;
+                }
+            } else if (ticks > 20) {
+                LOW_DURATION_START.remove(inst.getEffect());
+            }
+
             if (flicker) {
                 int elapsed = FLICKER_START - ticks;
                 float period = ticks > 60 ? 8f : ticks > 40 ? 8f / 1.25f : (8f / 1.25f) / 1.05f;
@@ -95,24 +121,42 @@ public final class PotionHudRenderer {
             out.add(new EffectEntry(
                 inst.getEffect().value().getDisplayName().getString(),
                 romanLevel(inst.getAmplifier()),
-                formatTicks(ticks), warn, textAlpha, inst.getEffect()));
+                formatTicks(ticks), warn, textAlpha, inst.getEffect(), infinite));
         }
         return out;
     }
 
     private static List<EffectEntry> buildFakeEntries() {
         return List.of(
-            new EffectEntry("Speed",        " II",  "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.MOVEMENT_SPEED.value())),
-            new EffectEntry("Regeneration", " I",   "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.REGENERATION.value())),
-            new EffectEntry("Strength",     " III", "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.DAMAGE_BOOST.value())),
-            new EffectEntry("Jump Boost",   " II",  "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.JUMP.value())),
-            new EffectEntry("Resistance",   " I",   "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.DAMAGE_RESISTANCE.value()))
+            new EffectEntry("Speed",        " II",  "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.MOVEMENT_SPEED.value()), false),
+            new EffectEntry("Regeneration", " I",   "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.REGENERATION.value()), false),
+            new EffectEntry("Strength",     " III", "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.DAMAGE_BOOST.value()), false),
+            new EffectEntry("Jump Boost",   " II",  "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.JUMP.value()), false),
+            new EffectEntry("Resistance",   " I",   "--:--", false, 1f, BuiltInRegistries.MOB_EFFECT.wrapAsHolder(MobEffects.DAMAGE_RESISTANCE.value()), false)
         );
+    }
+
+        private static int cachedWidth(String text, float scale) {
+        if (cachedMc == null || scale != cachedScale) {
+            TEXT_WIDTH_CACHE.clear();
+            cachedScale = (int)(scale * 1000);
+        }
+        String key = text + "@" + cachedScale;
+        Integer w = TEXT_WIDTH_CACHE.get(key);
+        if (w == null) {
+            w = (int)(cachedMc.font.width(text) * scale);
+            TEXT_WIDTH_CACHE.put(key, w);
+        }
+        return w;
     }
 
     private static int[] renderEntries(GuiGraphics g, PotionHudConfig cfg,
                                         Minecraft mc, int screenW, int screenH,
                                         List<EffectEntry> entries) {
+        if (cachedMc != mc) {
+            TEXT_WIDTH_CACHE.clear();
+            cachedMc = mc;
+        }
         float scale  = cfg.getScale();
         int iconSize = Math.max(1, (int)(BASE_ICON * scale));
         int pad      = Math.max(1, (int)(BASE_PAD  * scale));
@@ -145,7 +189,6 @@ public final class PotionHudRenderer {
         int bgX = startX - BG_PAD, bgY = startY - BG_PAD;
         int bgW = hudW + BG_PAD * 2, bgH = hudH + BG_PAD * 2;
 
-        // Background shadow — simple 3 layers
         if (cfg.isBgVisible() && cfg.isShadows()) {
             int[] offs = {3, 2, 1};
             float[] af  = {0.25f, 0.40f, 0.55f};
@@ -170,7 +213,6 @@ public final class PotionHudRenderer {
             int textY = y + (iconSize - lineH * 2) / 2;
             float mq  = i < marqueeOffsets.length ? marqueeOffsets[i] : 0;
 
-            // Icon — always full alpha (no flicker on icon)
             if (e.holder() != null) {
                 TextureAtlasSprite sprite = mc.getMobEffectTextures().get(e.holder());
                 graphics_flush_and_color(g, 1f);
@@ -178,31 +220,31 @@ public final class PotionHudRenderer {
             }
 
             int nameColor = e.warn() ? applyAlpha(COLOR_WARN, e.textAlpha()) : applyAlpha(0xFFFFFFFF, e.textAlpha());
+            String nameStr = e.name() + e.level();
+            String timeStr = e.infinite() ? "\u221E" : e.time();
+            int timeColor = e.infinite() ? applyAlpha(COLOR_WARN, 0.85f) : nameColor;
 
-            // Text depth shadow (text only, 3 layers)
             if (cfg.isShadows()) {
-                float si = SHADOW_INTENSITY * e.textAlpha();
+                float si = e.infinite() ? SHADOW_INTENSITY : SHADOW_INTENSITY * e.textAlpha();
                 int ts1 = (Math.min(255, (int)(si * 0.55f * 255))) << 24;
                 int ts2 = (Math.min(255, (int)(si * 0.30f * 255))) << 24;
                 int ts3 = (Math.min(255, (int)(si * 0.12f * 255))) << 24;
-                drawScrollingText(g, mc, e.name() + e.level(), textX+3, textY+3,        ts3, scale, maxTextW, mq);
-                drawScrollingText(g, mc, e.time(),              textX+3, textY+lineH+3,  ts3, scale, maxTextW, 0);
-                drawScrollingText(g, mc, e.name() + e.level(), textX+2, textY+2,        ts2, scale, maxTextW, mq);
-                drawScrollingText(g, mc, e.time(),              textX+2, textY+lineH+2,  ts2, scale, maxTextW, 0);
-                drawScrollingText(g, mc, e.name() + e.level(), textX+1, textY+1,        ts1, scale, maxTextW, mq);
-                drawScrollingText(g, mc, e.time(),              textX+1, textY+lineH+1,  ts1, scale, maxTextW, 0);
+                drawScrollingText(g, mc, nameStr, textX+3, textY+3,        ts3, scale, maxTextW, mq);
+                drawScrollingText(g, mc, timeStr, textX+3, textY+lineH+3,  ts3, scale, maxTextW, 0);
+                drawScrollingText(g, mc, nameStr, textX+2, textY+2,        ts2, scale, maxTextW, mq);
+                drawScrollingText(g, mc, timeStr, textX+2, textY+lineH+2,  ts2, scale, maxTextW, 0);
+                drawScrollingText(g, mc, nameStr, textX+1, textY+1,        ts1, scale, maxTextW, mq);
+                drawScrollingText(g, mc, timeStr, textX+1, textY+lineH+1,  ts1, scale, maxTextW, 0);
             }
-            drawScrollingText(g, mc, e.name() + e.level(), textX, textY,       nameColor, scale, maxTextW, mq);
-            drawScrollingText(g, mc, e.time(),              textX, textY+lineH, nameColor, scale, maxTextW, 0);
+            drawScrollingText(g, mc, nameStr, textX, textY,        nameColor, scale, maxTextW, mq);
+            drawScrollingText(g, mc, timeStr, textX, textY+lineH, timeColor, scale, maxTextW, 0);
 
             y += iconSize + pad;
         }
 
-        // Reset shader color after icons
         g.flush();
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-        // Overflow grid
         if (hasOverflow) {
             List<EffectEntry> overflow = entries.subList(displayCount, entries.size());
             int iconX = cfg.isIconRight() ? startX + maxTextW + pad : startX;
@@ -245,7 +287,7 @@ public final class PotionHudRenderer {
     private static void drawScrollingText(GuiGraphics g, Minecraft mc, String text,
                                            int x, int y, int color, float scale,
                                            int maxW, float scrollOffset) {
-        int textW = (int)(mc.font.width(text) * scale);
+        int textW = cachedWidth(text, scale);
         if (textW <= maxW) { drawScaledText(g, mc, text, x, y, color, scale); return; }
         int gap   = (int)(12 * scale);
         int cycle = textW + gap;
@@ -281,13 +323,15 @@ public final class PotionHudRenderer {
                     cov = 0.0;
                 } else {
                     int ins = 0;
+                    int total = 4 * 4;
+                    double sampleStep = 1.0 / 4.0;
                     for (int sy = 0; sy < 4; sy++)
                         for (int sx = 0; sx < 4; sx++) {
-                            double px = (r - col - 1.0) + (sx + 0.5) / 4.0;
-                            double py = (r - row - 1.0) + (sy + 0.5) / 4.0;
+                            double px = (r - col - 1.0) + (sx + 0.5) * sampleStep;
+                            double py = (r - row - 1.0) + (sy + 0.5) * sampleStep;
                             if (px * px + py * py <= (double) r * r) ins++;
                         }
-                    cov = ins / 16.0;
+                    cov = (double) ins / total;
                 }
                 if (cov <= 0.0) { cornerCache[row][col] = 0; continue; }
                 int a = Math.min(255, (int)(baseA * cov));

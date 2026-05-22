@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_25",
   "client": [
     "PauseScreenMixin",
-    "GameRendererAccessor"
+    "GameRendererAccessor",
+    "SplashManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 0

@@ -86,5 +86,10 @@
   "potionhud.button.hud_positioning": "HUD Positioning",
   "potionhud.option.hide_vanilla_hud_yes": "Скрыть HUD зелий ваниллы: Да",
   "potionhud.option.hide_vanilla_hud_no": "Скрыть HUD зелий ваниллы: Нет",
-  "potionhud.tooltip.hide_vanilla_hud": "Скрывает стандартные иконки эффектов зелий в правом верхнем углу"
+  "potionhud.tooltip.hide_vanilla_hud": "Скрывает стандартные иконки эффектов зелий в правом верхнем углу",
+  "potionhud.option.hide_level1_yes": "Скрыть уровень I: Да",
+  "potionhud.option.hide_level1_no": "Скрыть уровень I: Нет",
+  "potionhud.tooltip.hide_level1": "При включении эффекты 1-го уровня отображаются без римской цифры (напр. «Скорость» вместо «Скорость I»).",
+  "potionhud.tooltip.icon_side_to_right": "Изменяет сторону значка",
+  "potionhud.tooltip.icon_side_to_left": "Изменяет сторону значка"
 }
